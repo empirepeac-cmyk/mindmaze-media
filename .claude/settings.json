@@ -1,0 +1,20 @@
+{
+  "extraKnownMarketplaces": {
+    "remotion": {
+      "source": {
+        "source": "github",
+        "repo": "remotion-dev/claude-code-plugin"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "remotion@remotion": true,
+    "superdesign@claude-plugins-official": true
+  }
+}
