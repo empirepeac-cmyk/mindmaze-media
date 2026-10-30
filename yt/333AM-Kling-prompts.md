@@ -1,21 +1,16 @@
-# 3:33 AM — Kling prompts (6 clips, 9:16, 5s each, Professional mode)
-Texts, phone messages, captions and the freeze frame are added in the edit. Kling only makes the picture.
-Same apartment, same dog, same mother in every clip.
+# 3:33 AM — Kling prompts v2 (girl lead) — 4 clips = 30s, 9:16, Professional mode
+Texts, phone messages and the freeze frame are added in the edit. Kling only makes the picture.
+CHARACTER (paste in every prompt so she looks the same): a beautiful young woman in her early 20s, long dark wavy hair, soft natural makeup, big expressive eyes, wearing an oversized grey hoodie and black shorts.
+Best consistency: first make ONE image of her on the sofa (Kling image or the one Claude sends), then use Image-to-Video for clips 1, 2 and 4 with that image.
 
-## 1 — Normal night, dog staring at the door
-Cinematic horror, 9:16 vertical. A small cozy apartment living room at 3 AM, lit only by the cold blue glow of a TV playing static. A wall clock ticks, a blanket and a phone lie on the sofa. A black Labrador dog stands completely still in the middle of the room, staring at the closed front door, ears back, growling softly. Slow, steady push-in toward the dog and the door. Dust floating in the TV light, deep shadows in the corners, quiet and tense atmosphere, realistic, film grain, shallow depth of field. One continuous shot with no cuts. No text, no people.
+## Clip 1 — 10s — Normal night, then the texts
+Cinematic horror film, 9:16 vertical. 3 AM in a small cozy apartment living room, lit only by the cold blue glow of a TV playing static and a small warm lamp. CHARACTER is curled up on the sofa under a blanket, relaxed and sleepy, scrolling her phone. A black Labrador stands completely still in the middle of the room, staring at the closed front door, ears back, growling softly. Her phone suddenly vibrates again and again. She reads it; her face slowly changes from bored to confused to real fear, lips parted, breathing faster. She slowly looks toward the front door, then reaches over and switches off the lamp. Slow push-in on her face, dust floating in the TV light, deep shadows, quiet tense atmosphere, realistic, film grain, shallow depth of field. One continuous shot with no cuts. No text on screen.
 
-## 2 — Phone vibrating in the dark
-Cinematic horror, 9:16 vertical. Extreme close-up of a young person's trembling hands holding a smartphone in a dark living room at night. The phone vibrates again and again, the bright screen light is the only light, reflecting on the fingers. Background: blurry blue TV glow and the dark shape of a dog. Shallow depth of field, handheld micro-shake, tense and anxious mood, realistic, film grain. The screen content is blurred and unreadable. One continuous shot with no cuts. No face visible, no text.
+## Clip 2 — 10s — The knock
+Cinematic horror film, 9:16 vertical. A dark narrow apartment hallway, all lights off. The only light is a thin warm line under the front door from the corridor outside, and two shadows of feet standing still in it. CHARACTER walks barefoot toward the door very slowly, phone pressed to her chest, the screen glow lighting her frightened face from below. Three soft knocks on the door. She freezes and covers her mouth with her hand, eyes wide and wet with fear. Then, trembling, she leans in slowly toward the peephole. Camera follows behind her shoulder, then slowly moves to her profile. Silent, suffocating atmosphere, realistic, film grain. One continuous shot with no cuts. No text.
 
-## 3 — Lights off, knock at the front door
-Cinematic horror, 9:16 vertical. A dark apartment hallway seen from inside, facing the front door. All lights are off; the only light is a thin warm line under the door from the outside corridor. Two shadows of feet stand still in that line of light. The door knob turns slowly, very slightly, then stops. The camera is perfectly still, as if holding its breath. Deep blacks, silent, suffocating atmosphere, realistic, film grain. One continuous shot with no cuts. No text.
+## Clip 3 — 5s — Through the peephole: "Mom"
+Cinematic horror film, 9:16 vertical. POV through a door peephole: round fisheye lens view, dark vignette around the edges. A dim, flickering apartment corridor. A middle-aged woman with dark hair tied back, wearing light blue nurse scrubs, stands right in front of the door. She smiles too wide, her head slowly tilts to the side at an unnatural angle, her eyes never blink, staring straight into the peephole. She slowly leans closer to the lens. Uncanny, subtle and realistic, no monster makeup, film grain. One continuous shot with no cuts. No text.
 
-## 4 — Through the peephole: "Mom"
-Cinematic horror, 9:16 vertical. POV through a door peephole: round fisheye lens view, dark vignette around the edges. A dim, flickering apartment corridor. A middle-aged woman with dark hair tied back, wearing light blue nurse scrubs, stands right in front of the door. She smiles too wide, her head slowly tilts to the side at an unnatural angle, her eyes never blink, staring straight into the peephole. She slowly leans closer to the lens. Uncanny, subtle and realistic, no monster makeup, film grain. One continuous shot with no cuts. No text.
-
-## 5 — The dog backs away from the hallway behind us
-Cinematic horror, 9:16 vertical. The same dark living room, TV off now, only faint moonlight from a window. The black Labrador slowly backs away step by step, tail down, whimpering, staring past the camera at something behind the viewer. Its eyes reflect the light. Low camera angle, still, heavy silence, realistic, film grain. One continuous shot with no cuts. No text, no people.
-
-## 6 — Bedroom door opens behind us
-Cinematic horror, 9:16 vertical. Slow handheld turn to reveal a dark narrow apartment hallway, a bedroom door at the end, slightly open, total darkness inside. The door slowly creaks open a little more, and pale thin fingers curl around the edge of the door from the darkness. Nothing else is visible. Very slow, tense, quiet, realistic, film grain, deep shadows. One continuous shot with no cuts. No text.
+## Clip 4 — 5s — Behind her
+Cinematic horror film, 9:16 vertical. CHARACTER stands with her back pressed against the front door in the dark hallway, holding her breath, looking at her phone, faint moonlight. At her feet the black Labrador backs away step by step, whimpering, staring past her down the hallway. At the far end of the hallway behind her, a bedroom door slowly creaks open and pale thin fingers curl around its edge from the darkness. She has not noticed yet; she slowly starts to turn her head. Very slow, tense, quiet, realistic, film grain, deep shadows. One continuous shot with no cuts. No text.
