@@ -20,7 +20,7 @@ Takeaway: "Walk back to where you had the thought. It usually comes back."
 ## 2. The falling feeling just as you fall asleep
 Scene: someone in bed, a sudden jolt.
 VO: "You're drifting off, and suddenly you're falling, and your whole body jumps."
-Why: "A hypnic jerk. As your muscles relax, your brain misreads it as falling and slams on the brakes. Up to 70% of people get it."
+Why: "A hypnic jerk. As your muscles relax, your brain misreads it as falling and slams on the brakes. Most people have had one at least once."
 
 ## 3. Your phone vibrated. It didn't.
 Scene: hand reaching for the pocket, the screen is empty.
@@ -29,8 +29,8 @@ Why: "Phantom vibration. Your brain is so tuned to that signal that it starts he
 
 ## 4. A song stuck in your head for days
 Scene: person humming while doing something else.
-Why: "An earworm. Your brain loops the unfinished bit of the song, trying to complete it."
-Takeaway: "Listen to the whole song to the end, or chew gum. Both help."
+Why: "An earworm. More than 9 in 10 people get one every week. Your brain keeps looping a short piece of the song, often the part it can't finish."
+Takeaway: "In one study, chewing gum cut earworms by about a third. Your mouth is busy, so your inner voice can't sing along."
 
 ## 5. A word stops making sense
 On screen: the word "spoon" repeated until it looks wrong.
@@ -52,7 +52,7 @@ Why: "Pareidolia. Missing a real face was more dangerous than seeing a fake one,
 
 ## 9. You've lived this moment before
 VO: "Déjà vu: this exact moment, already happened."
-Why: "A tiny timing glitch: one part of the brain flags the moment as 'familiar' before another part has processed it as new."
+Why: "One leading explanation: the place or moment looks a lot like something you've seen before, but you can't recall what. So you get the feeling of familiarity without the memory behind it."
 
 ## 10. Learn a new word, then see it everywhere
 Why: "The Baader-Meinhof phenomenon. It was always there; your brain just started paying attention."
@@ -74,4 +74,4 @@ End screen: the mind-reading Short + this video.
 - Chapters in the description, one per item (searchable titles: "doorway effect", "hypnic jerk", ...).
 - Every item is cut into its own Short (11 Shorts) pointing to this video.
 - Sounds: real recordings; calm music under VO.
-- Fact-check each "why" before recording (keep claims modest; "up to 70%" for hypnic jerk is a commonly cited estimate).
+- Fact-checked 2026-11-03: earworm (Univ. of Reading 2015: >90% weekly; gum reduced by ~1/3), déjà vu (Cleary, familiarity), hypnic jerk wording kept modest.
