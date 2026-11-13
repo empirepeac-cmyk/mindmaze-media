@@ -17,7 +17,7 @@ def line(d,cx,y,parts,font,a=255):
         d.text((x,y),s,font=font,fill=c+(int(max(0,min(255,a))),)); x+=d.textlength(s,font=font)
 yy,xx=np.mgrid[0:1920,0:1080].astype(np.float32)
 VIG=(1-0.42*np.clip(((xx-540)/760)**2+((yy-960)/1250)**2,0,1))[...,None]
-BAND=np.clip(1-yy/430,0,1)[...,None]**1.3*0.80
+BAND=np.clip((600-yy)/230,0,1)[...,None]**1.2*0.96
 def frame(f,src):
     t=f/C.FPS
     im=Image.open(src).convert('RGB').resize((1080,1920),Image.LANCZOS).filter(ImageFilter.UnsharpMask(2,60,2))
@@ -40,9 +40,9 @@ def frame(f,src):
         line(d,540,236,[('can the ',WH),('glass',CY),(' take?',WH)],F(HB,76),255*k)
         lh=max([h[0] for h in C.HITS if h[0]<=t] or [-9]); p=max(0,1-(t-lh)/0.25)
         sz=int(92+26*p); line(d,540,350-13*p,[(f'{nh:02d}',mix(WH,CY,p))],F(MB,sz),255*k)
-        line(d,540,462,[('HITS',DIM)],F(MB,30),255*k)
+        line(d,540,466,[('HITS',DIM)],F(MB,36),255*k)
         col=RED if lf<=10 else DIM
-        line(d,540,512,[(f'{lf:02d} balls left',col)],F(MB,34),255*ease((t-0.8)/0.4))
+        line(d,540,522,[(f'{lf:02d} balls left',col)],F(MB,42),255*ease((t-0.8)/0.4))
     elif t<C.TREL:
         k=ease((t-C.OUT)/0.3)
         line(d,540,170-20*(1-k),[('It broke on hit ',WH),(str(NH),GOLD)],F(HB,84),255*k)
