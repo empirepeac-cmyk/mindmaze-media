@@ -46,6 +46,12 @@ for n,(t,imp,dm) in enumerate(C.HITS[:-1]):
     add(fx,rs(crk,1.5),t+0.03,1.2+1.5*n/nh)
 add(fx,gb[on-200:],C.OUT-0.004,0.95); add(fx,rs(gb[on-200:],1.35),C.OUT+0.02,0.5)
 add(fx,rs(gb[on-200:],0.72),C.TREL-0.004,1.0); add(fx,gb[on-200:],C.TREL+0.015,0.8); add(fx,rs(gb[on-200:],0.9),C.TREL+0.07,0.6)
+# tinkling of falling shards after each shatter (real glass transient, pitched up)
+for T0,n_,dur,g0 in ((C.OUT,16,0.9,0.42),(C.TREL,30,1.2,0.5)):
+    add(fx,rs(gb[on-200:],0.85),T0+0.01,0.55)
+    for i in range(n_):
+        dt=rng.uniform(0.05,dur)**1.0; p=rng.uniform(2.1,3.6)
+        add(fx,rs(hit,p),T0+dt,g0*(1-dt/dur*0.75)*rng.uniform(0.5,1.0),rng.uniform(-0.7,0.7))
 # 3) gold landing thump + real wind chimes for the golden wave and the rise
 t_=np.arange(int(0.35*SR))/SR; thump=(np.sin(2*np.pi*(95-60*t_)*t_)*np.exp(-t_*14)).astype(np.float32)
 add(dry,thump,C.LT,0.55)

@@ -48,7 +48,7 @@ def glassmat(name,es0=0.45):
     nt.links.new(at.outputs['Fac'],ma.inputs[0]); nt.links.new(ma.outputs[0],em.inputs[1])
     nt.links.new(fr.outputs[0],mx.inputs[0]); nt.links.new(tr.outputs[0],mx.inputs[1]); nt.links.new(gl.outputs[0],mx.inputs[2])
     nt.links.new(mx.outputs[0],ad.inputs[0]); nt.links.new(em.outputs[0],ad.inputs[1]); nt.links.new(ad.outputs[0],out.inputs[0]); return m
-GLASS=glassmat('glass'); SHARD=glassmat('shard',1.2)
+GLASS=glassmat('glass'); SHARD=glassmat('shard',0.12)
 CRACK=mat('crack',(1,1,1),rough=0.5,emit=(1.0,1.0,1.0),es=5.0)
 def ballmat():
     m=bpy.data.materials.new('ball'); m.use_nodes=True; nt=m.node_tree; p=nt.nodes['Principled BSDF']
@@ -95,25 +95,72 @@ for n in range(len(C.HITS)):
         if not inside(nx,ny): break
         parts.append(seg((CXp+x,CYp+y+4),(CXp+nx,CYp+ny+4),1.15,-0.262,-0.245,CRACK,0.005)); x,y=nx,ny; ang+=rr.uniform(-0.9,0.9)
     cracks.append(parts)
-# shards
-def mkshards(n,seed,src,spread):
-    r_=random.Random(seed); L=[]
+# shards: fracture the real shapes into irregular pieces that start in place
+def clip(poly,px,py,nx,ny):
+    out=[]; n=len(poly)
     for i in range(n):
-        x0,y0=src(r_); sz=r_.uniform(7,17)
-        pts=[(sz*math.cos(a),sz*math.sin(a)*r_.uniform(0.4,0.9)) for a in (0.2,2.2+r_.uniform(-.4,.4),4.3+r_.uniform(-.4,.4))]
-        o=prism([(540+px,960+py) for px,py in pts],-0.03,0.03,SHARD); o['fl']=0.0
-        vx,vy=spread(r_,x0,y0); L.append((o,x0,y0,vx,vy,r_.uniform(0,6.28),r_.uniform(-9,9),r_.uniform(-6,6),r_.uniform(-0.2,0.12)))
+        ax,ay=poly[i]; bx_,by_=poly[(i+1)%n]
+        da=(ax-px)*nx+(ay-py)*ny; db=(bx_-px)*nx+(by_-py)*ny
+        if da<=0: out.append((ax,ay))
+        if (da<0)!=(db<0) and da!=db:
+            u=da/(da-db); out.append((ax+(bx_-ax)*u,ay+(by_-ay)*u))
+    return out
+def area(p): return abs(sum(p[i][0]*p[(i+1)%len(p)][1]-p[(i+1)%len(p)][0]*p[i][1] for i in range(len(p))))/2
+def fracture(poly,seeds):
+    cells=[]
+    for i,(sx,sy) in enumerate(seeds):
+        c=list(poly)
+        for j,(tx,ty) in enumerate(seeds):
+            if i==j: continue
+            c=clip(c,(sx+tx)/2,(sy+ty)/2,tx-sx,ty-sy)
+            if len(c)<3: break
+        if len(c)>=3 and area(c)>6: cells.append(c)
+    return cells
+def piece(pts,th,m):
+    cx=sum(p[0] for p in pts)/len(pts); cy=sum(p[1] for p in pts)/len(pts)
+    me=bpy.data.meshes.new('sh'); bm=bmesh.new()
+    f=[bm.verts.new(((x-cx)/100,-th,-(y-cy)/100)) for x,y in pts]; b=[bm.verts.new(((x-cx)/100,th,-(y-cy)/100)) for x,y in pts]
+    n=len(pts); bm.faces.new(f); bm.faces.new(b[::-1])
+    for i in range(n): bm.faces.new([f[(i+1)%n],f[i],b[i],b[(i+1)%n]])
+    bmesh.ops.recalc_face_normals(bm,faces=bm.faces); bm.to_mesh(me); bm.free()
+    o=bpy.data.objects.new('sh',me); s.collection.objects.link(o); me.materials.append(SHARD); o['fl']=0.0
+    return o,cx,cy
+def mkshards(polys,seed,origin,dens,sp,th,ndust):
+    r_=random.Random(seed); L=[]
+    for poly in polys:
+        xs=[p[0] for p in poly]; ys=[p[1] for p in poly]; n=max(3,int(area(poly)/dens))
+        seeds=[(r_.uniform(min(xs),max(xs)),r_.uniform(min(ys),max(ys))) for _ in range(n)]
+        for c in fracture(poly,seeds):
+            o,cx,cy=piece(c,th,SHARD)
+            dx,dy=cx-origin[0],cy-origin[1]; d=math.hypot(dx,dy)+1e-6; v=r_.uniform(*sp)
+            L.append(dict(o=o,x=cx,y=cy,vx=dx/d*v+r_.uniform(-90,90),vy=dy/d*v*0.7+r_.uniform(-260,40),
+                          w=(r_.uniform(-12,12),r_.uniform(-12,12),r_.uniform(-7,7)),ph=r_.uniform(0,6.28),wy=r_.uniform(-0.5,0.1),life=99,delay=r_.uniform(0,0.035)))
+    for i in range(ndust):
+        poly=r_.choice(polys); k=r_.randrange(len(poly)); x0,y0=poly[k]; sz=r_.uniform(1.6,4.2)
+        pts=[(x0+sz*math.cos(a),y0+sz*math.sin(a)) for a in (0.3,2.3+r_.uniform(-.5,.5),4.2+r_.uniform(-.5,.5))]
+        o,cx,cy=piece(pts,0.008,SHARD)
+        dx,dy=cx-origin[0],cy-origin[1]; d=math.hypot(dx,dy)+1e-6; v=r_.uniform(sp[1]*0.8,sp[1]*2.4)
+        L.append(dict(o=o,x=cx,y=cy,vx=dx/d*v+r_.uniform(-200,200),vy=dy/d*v+r_.uniform(-420,80),
+                      w=(r_.uniform(-25,25),r_.uniform(-25,25),r_.uniform(-25,25)),ph=r_.uniform(0,6.28),wy=r_.uniform(-0.8,0.1),life=r_.uniform(0.5,1.1),delay=0))
     return L
-cupsh=mkshards(18,8,lambda r_:(CXp+r_.uniform(-34,34),CYp+r_.uniform(-20,88)),lambda r_,x,y:(r_.uniform(-380,380),r_.uniform(-420,60)))
+cup_poly=[(CXp+x,CYp+y+4) for x,y in rel]
+cupsh=mkshards([cup_poly],8,(CXp,CYp-16),120,(130,520),0.05,70)
+def wallpoly(p,q,th):
+    dx,dy=q[0]-p[0],q[1]-p[1]; d=math.hypot(dx,dy); nx,ny=-dy/d*th/2,dx/d*th/2
+    return [(p[0]+nx,p[1]+ny),(q[0]+nx,q[1]+ny),(q[0]-nx,q[1]-ny),(p[0]-nx,p[1]-ny)]
 pp=C.POT[1:-1]
-def potsrc(r_):
-    k=r_.randrange(len(pp)-1); u=r_.random(); return (pp[k][0]+(pp[k+1][0]-pp[k][0])*u, pp[k][1]+(pp[k+1][1]-pp[k][1])*u)
-potsh=mkshards(46,21,potsrc,lambda r_,x,y:((x-540)*r_.uniform(0.8,2.2),r_.uniform(-250,150)))
+potsh=mkshards([wallpoly(pp[i],pp[i+1],11) for i in range(len(pp)-1)],21,(540,1575),150,(160,560),0.06,130)
+GRAV=1500.0
 def place(L,dt):
-    for o,x0,y0,vx,vy,a0,w,w2,dy in L:
-        if dt<0: o.location=FAR; continue
-        x=x0+vx*dt; y=y0+vy*dt+900*dt*dt
-        o.location=(bx(x),dy-0.1,bz(y)); o.rotation_euler=(w2*dt,a0+w*dt,w2*dt*0.6)
+    for d_ in L:
+        o=d_['o']; t_=dt-d_['delay']
+        if dt<0 or t_>d_['life']+0.01: o.location=FAR; continue
+        t_=max(0.0,t_)
+        x=d_['x']+d_['vx']*t_; y=d_['y']+d_['vy']*t_+0.5*GRAV*t_*t_
+        o.location=(bx(x),-0.1+d_['wy']*t_,bz(y)); w=d_['w']; o.rotation_euler=(w[0]*t_,w[1]*t_,w[2]*t_)
+        k=1.0 if d_['life']>50 else max(0.0,1-t_/d_['life'])
+        o.scale=(k,k,k)
+        o['fl']=(0.10+1.0*max(0.0,math.cos(w[0]*t_*1.3+d_['ph']))**10)*(1.0 if t_>0.02 else 2.5); o.update_tag()
 # balls
 bpy.ops.mesh.primitive_uv_sphere_add(radius=1,segments=40,ring_count=20,location=(0,0,300)); base=bpy.context.object; bpy.ops.object.shade_smooth()
 base.data.materials.append(BALL)
