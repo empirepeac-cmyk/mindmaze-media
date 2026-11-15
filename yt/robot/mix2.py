@@ -30,7 +30,7 @@ def load(p):
     return _c[p]
 def rs(x,rate): return signal.resample(x,max(8,int(len(x)/rate))) if rate!=1 else x
 def mk(i,rate=1.0,a=0,b=None):
-    x=load(f'mk/{i}.wav'); x=x[int(a*SR):int(b*SR) if b else None]; x=x/np.abs(x).max(); return rs(x,rate)
+    x=load(f'mk/{i}.wav'); x=x[int(a*SR):int(b*SR) if b else None]; x=x/np.abs(x).max(); on=np.nonzero(np.abs(x)>0.06)[0]; x=x[max(0,on[0]-int(0.002*SR)):]; return rs(x,rate)
 K='../robot/sfx/kenney/'
 def kn(p,rate=1.0): return rs(load(K+p+'.ogg'),rate)
 def fade(x,fi=0.005,fo=0.05):
@@ -77,21 +77,21 @@ def strokes(src,thr=0.12,mind=0.12):
 G=strokes('mk/165.wav')+strokes('mk/162.wav')+strokes('mk/3086.wav')
 G=[g/np.sqrt((g**2).mean()) *0.1 for g in G if 0.12<len(g)/SR<0.9]
 print('real strokes available',len(G),'median len',np.median([len(g)/SR for g in G]))
-Bs=np.zeros_like(B)
-for a_,b_ in [(160,250),(300,341),(560,703)]:
-    seg=np.convolve(signal.medfilt(B[a_:b_],3),[.25,.5,.25],'same'); p=np.percentile(seg,92); Bs[a_:b_]=np.clip((seg-2.0)/(p-2.0),0,1.3)
-bnew=remap(Bs); bnew[cut]=0
-sm=np.convolve(bnew,np.hanning(7)/np.hanning(7).sum(),'same'); act=sm>0.14
-nst=0; i=0
-while i<NFR:
-    if not act[i]: i+=1; continue
-    j=i+int(np.argmax(bnew[i:i+3]))                    # snap to the local motion peak
-    h=max(bnew[j],sm[j]); dur=rng.uniform(0.2,0.3)
-    g=G[rng.integers(len(G))]; rate=np.clip(len(g)/SR/dur,1.0,2.4); x=rs(g,rate)
-    wet=(j/24)>(tn(23.5) or 99)
-    x=hp(x,500) if not wet else hp(x,350)*0.75+lp(x,1800)*0.6
-    add(fade(x,0.008,0.04),max(0,j/24-0.04),0.5*min(1.15,h)**0.7,0.12+rng.uniform(-.05,.05)); nst+=1
-    i=j+int(rng.integers(5,7))
+def ft(f): return tn((f-1)/24.0)
+ST=[(170,172,.8),(172,175,.9),(175,180,1),(180,186,1),(186,191,1),(191,198,1),(198,203,.9),      # dry scrubbing, back and forth
+    (299,306,1),(320,331,.55),                                                                 # after the first lamp shot
+    (562,577,.8),(578,592,.9),(598,612,.85),(626,632,.9),(646,660,.8),(668,679,.7)]              # long wet sweeps through the spill
+nst=0; Gs=sorted(G,key=len)
+for f0,f1,gn in ST:
+    t0,t1=ft(f0),ft(f1)
+    if t0 is None or t1 is None or t1<=t0: continue
+    dur=t1-t0+0.03
+    cand=[g for g in Gs if 0.6<len(g)/SR/dur<2.2] or Gs[-6:]
+    g=cand[rng.integers(len(cand))]; x=rs(g,len(g)/SR/dur)
+    wet=f0>500
+    x=hp(x,500) if not wet else hp(x,300)*0.8+lp(x,1600)*0.7
+    w=np.hanning(len(x))**0.6                                   # loudest mid-stroke, quiet at the turn
+    add(x*w,t0,0.55*gn,0.12+(0.1 if nst%2 else -0.05)); nst+=1
 print('strokes placed',nst)
 # ---- lamp hum only while the lamp is on screen
 lam=((m>=252)&(m<=299))|((m>=343)&(m<=358)); d=np.diff(np.concatenate([[0],lam.astype(int),[0]]))
@@ -101,18 +101,24 @@ for s,e_ in zip(np.nonzero(d==1)[0],np.nonzero(d==-1)[0]):
     y=0.5*np.sin(2*np.pi*100*t)+0.25*np.sin(2*np.pi*200*t)+0.12*signal.sawtooth(2*np.pi*100*t)+bp(signal.square(2*np.pi*100*t),2000,6000)*0.05
     add(y*a,s/24,0.03)
 # ---- BIN: real recordings
-add(mk(833,0.62),tn(17.34),0.22,0.35)                      # robot's back knocks the bin
-add(kn('rpg-audio/Audio/creak2',0.85),tn(17.5),0.07,0.4)   # it tips
-tc=tn(17.96)
+add(mk(833,0.62),ft(419),0.22,0.35)                      # robot's back knocks the bin
+add(kn('rpg-audio/Audio/creak2',0.85),ft(422),0.07,0.4)   # it tips
+tc=ft(432)
 add(mk(2980,0.78),tc,0.85,0.4)                              # bin slams on the floor
 add(mk(835,0.7),tc+0.02,0.55,0.45)
 add(fade(mk(398,1.0,0.1,2.6),0.01,1.2),tc+0.05,0.5,0.35)    # rubbish pours out
-add(mk(3158,0.9),tc+0.2,0.45,0.3)                           # lid lands and rattles
-add(mk(389,1.0),tc+0.42,0.4,0.45)                           # tins bounce
-add(mk(389,1.35),tc+0.95,0.22,0.2)
-add(mk(820,1.3),tc+0.7,0.2,0.5)
+add(mk(3158,0.9),ft(435),0.45,0.3)                           # lid lands and rattles
+add(mk(389,1.0),ft(444),0.4,0.45)                           # tins bounce
+add(mk(389,1.35),ft(455),0.22,0.2)
+add(mk(820,1.3),ft(449),0.2,0.5)
 add(kn('x/Audio/impactWood_light_000',1.0),tn(15.0),0.14,0.0)   # brush put down
 add(kn('x/Audio/impactWood_light_002',1.3),tn(23.75),0.07,-0.3) # brush picked up
+# ---- oil dripping from the brush it hides behind its back (real water-drip recording)
+dr=load('mk/1879.wav'); n_=int(0.004*SR); ev=np.sqrt(np.convolve(dr**2,np.ones(n_)/n_,'same')); pk,_=signal.find_peaks(ev,height=ev.max()*0.25,distance=int(0.15*SR))
+drops=[fade(dr[p-int(0.004*SR):p+int(0.16*SR)]/np.abs(dr[p-int(0.004*SR):p+int(0.16*SR)]).max(),0.002,0.06) for p in pk if p>0.01*SR]
+print('drip grains',len(drops))
+for k,f in enumerate([715,721,727,733,739,745]):
+    add(rs(drops[k%len(drops)],rng.uniform(0.8,0.95)),ft(f),0.30*rng.uniform(0.75,1.0),-0.45)
 # ---- robot voice
 V=[(0.95,[(620,900,.09,.05),(900,1250,.13,0)],.06),(3.05,[(700,1050,.16,0)],.05),(6.55,[(520,500,.07,.05),(520,500,.07,0)],.05),
    (10.15,[(480,300,.28,0)],.06),(15.05,[(660,990,.10,.04),(990,1320,.16,0)],.06),(18.45,[(1500,1700,.06,.04),(1500,1700,.06,0)],.06),
